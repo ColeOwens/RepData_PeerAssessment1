@@ -39,7 +39,7 @@ For this part of the assignment, you can ignore the missing values in the datase
 
 ### B1) Calculate the total number of steps taken per day
 
-```{r}
+```{r sumDay}
 ## find the daily sum of steps
 sumDay <- with(actrm, tapply(steps, Date, sum, na.rm=T))
 #sumDay2 <- data.frame(Date = as.Date(colnames(sumDay,"%Y-%m-%d")),sumDay)
@@ -49,7 +49,7 @@ print(sumDay)
 
 ### B2) If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
 
-```{r}
+```{r histogram1}
 # Create histogram of sumDay
 hist(sumDay,
      main = "Histogram of Daily Steps",
@@ -60,7 +60,7 @@ hist(sumDay,
 
 ### B3) Calculate and report the mean and median of the total number of steps taken per day
 
-```{r}
+```{r meanmedian1}
 meanDay <- mean(sumDay, na.rm = T) 
 medDay <- median(sumDay, na.rm = T)
 ```
@@ -72,10 +72,11 @@ The median number of steps: `r medDay`
 
 ### C1) Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r}
+```{r IntSteps1}
 # Create a dataframe with the 5-min interval average # of steps
 IntSteps <- aggregate(steps ~ interval, data = actrm, FUN = mean, na.rm = T)
-
+```
+```{r IntStepsPlot}
 # Plot the averages you just calculated
 ggplot(data=IntSteps, aes(x=interval, y=steps)) +
     geom_line() +
@@ -86,7 +87,7 @@ ggplot(data=IntSteps, aes(x=interval, y=steps)) +
 
 ### C2) Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+```{r maxIntStep}
 maxIntStep <- IntSteps[which.max(IntSteps$steps),]
 print(maxIntStep)
 ```
@@ -97,7 +98,7 @@ Note that there are a number of days/intervals where there are missing values (c
 
 ### D1) Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r}
+```{r NumNA}
 NumNA <- sum(!complete.cases(act2$steps))
 ```
 
@@ -109,7 +110,7 @@ I choose to use the mean # of step from the 5-min interval calculated in step C1
 
 ### D3) Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r}
+```{r act3}
 ## Create a new dataset
 act3 <- act2
 
@@ -124,10 +125,11 @@ print (NumNA3)
 
 ### D4) Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r}
+```{r sumDay3}
 # Find the daily sum of your new data frame
 sumDay3 <- with(act3, tapply(steps, Date, sum, na.rm=T))
-
+```
+```{r histogram2}
 # Create a histogram of the new data frame, layer the first histogram on top
 hist(sumDay3,
      main = "Histogram of Daily Steps",
@@ -141,7 +143,8 @@ hist(sumDay,
      col = "blue",
      add = T)
 legend("topright", c("Imputed", "Non-imputed"), col=c("yellow", "blue"), lwd=5)
-
+```
+```{r meanmedian4}
 ## calculate the mean/median of the new data
 meanDay3 <- mean(sumDay3,na.rm = T)
 medDay3 <- median(sumDay3, na.rm = T)
@@ -164,7 +167,7 @@ For this part the **weekdays()** function may be of some help here. Use the data
 
 ### E1) Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r}
+```{r act4}
 ## use act3 to create a new dataset
 act4 <- act3
 
@@ -174,10 +177,11 @@ act4$EndOrDay <- ifelse((weekdays(as.Date(act4$date)) %in% c("Saturday", "Sunday
 
 ### E2) Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
 
-```{r}
+```{r sumInt4}
 ## Aggregate with relation to interval and weekend/weekday
 sumInt4 <- aggregate(act4$steps, list(Interval = act4$interval, EndOrDay = act4$EndOrDay), mean, na.rm = T)
-
+```
+```{r weekendweekday}
 ## Plot the comparison of average steps on Weekends vs Weekdays
 xyplot(x ~ Interval | EndOrDay,
        layout = c(1,2),
